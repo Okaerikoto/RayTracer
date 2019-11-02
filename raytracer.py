@@ -14,7 +14,6 @@ class Vec3:
     def __str__(self):
         return "({} {} {})".format(self.x, self.y, self.z)
 
-
     def __eq__(self, other):
         return (self.x == other.x) & (self.y == other.y) & (self.z == other.z)
 
@@ -42,6 +41,13 @@ class Vec3:
     def __rmul__(self, other):
         return self.__mul__(other)
 
+    def mul(self, other):
+        out = Vec3()
+        out.x = self.x * other.x
+        out.y = self.y * other.y
+        out.z = self.z * other.z
+        return out
+
     def __truediv__(self, other):
         out = Vec3()
         out.x = self.x / other
@@ -66,21 +72,34 @@ class Vec3:
                 + self.z * other.z
         return value
 
+    def normalize(self):
+        return self/self.norm()
+
 
 class Ray:
     def __init__(self, o, d):
         self.o = o
         self.d = d/d.norm()
 
+class Light:
+    def __init__(self, pos=Vec3(0,0,0), color=Vec3(1,1,1), strength=1):
+        self.pos = pos
+        self.color = color
+        self.strength = strength
+
 class Sphere:
 
-    def __init__(self, c, r):
-        self.center = c
-        self.radius = r
-        self.color = Vec3(1,0,0)
+    def __init__(self, pos, radius, color=Vec3(1,0,0)):
+        self.pos = pos
+        self.radius = radius
+        self.color = color
+        print("Sphere at {} with radius {} and color {}".format(self.pos, self.radius, self.color))
+
+    def normal(self, v):
+        return (v - self.pos).normalize()
 
     def intersect(self, ray):
-        cam_sphere = self.center - ray.o  # camera sphere distance
+        cam_sphere = self.pos - ray.o  # camera sphere distance
         angle_ray_sphere = math.acos(ray.d.dot(cam_sphere)/cam_sphere.norm())
         dist_ray_sphere = math.sin(angle_ray_sphere)*cam_sphere.norm() #cam_sphere.cross(ray.d).norm()  # ray sphere distance
         if dist_ray_sphere <= self.radius:
@@ -108,7 +127,7 @@ class Camera:
 
     def shoot_ray(self, i, j):
         x,z = self.pixel_to_meters(i, j)
-        ray = Ray(Vec3(0,0,0), Vec3(x, self.focal, z))
+        ray = Ray(Vec3(0,0,0), Vec3(z, self.focal, x))
         return ray
 
 
@@ -133,25 +152,29 @@ def run_tests():
     # print(s.intersect(r2) == (True, Vec3(0, 1, 0.5)))
     pass
 
+def main():
+
+    camera = Camera()
+    sphere = Sphere(pos=Vec3(0, 2, 0),  radius=0.5, color=Vec3(1, 0.2, 0.2))
+    light = Light(pos=Vec3(2, 0.2, 0.2), color=Vec3(1,1,0.5), strength=1)
+
+    ambient = 0.3 * Vec3(0.4, 0.4, 1)
+
+    f = open("out.ppm", "w")
+    f.write("P3\n{} {} {}\n".format(camera.res_width, camera.res_height, 255
+                                    ))
+    for u in range(camera.res_width):
+        for v in range(camera.res_height):
+            c = Vec3(0, 0, 0)
+            ray = camera.shoot_ray(u, v)
+            intersect, i = sphere.intersect(ray)
+            if intersect:
+                n = sphere.normal(i)
+                l = light.pos - i
+                light_source = max(n.dot(l.normalize()),0) * light.strength * sphere.color.mul(light.color)
+                light_ambient = sphere.color.mul(ambient)
+                c = light_source + light_ambient
+            f.write("{} {} {}\n".format(floatto8bit(c.x), floatto8bit(c.y), floatto8bit(c.z)))
 
 run_tests()
-
-camera = Camera()
-
-sphere = Sphere(Vec3(0,2,0), 0.5)
-print("Sphere at {} with radius {}".format(sphere.center, sphere.radius))
-
-f = open("out.ppm", "w")
-f.write("P3\n{} {} {}\n".format(camera.res_width, camera.res_height, 255
-                                ))
-
-for i in range(camera.res_width):
-    for j in range(camera.res_height):
-        color = Vec3(0, 0, 0)
-        ray = camera.shoot_ray(i, j)
-        inters = sphere.intersect(ray)
-        if inters[0]:
-            print(sphere.intersect(ray)[1].y)
-            color = sphere.color #*abs(inters[1].y-1.75)*4
-        f.write("{} {} {}\n".format(floatto8bit(color.x), floatto8bit(color.y), floatto8bit(color.z)))
-
+main()
