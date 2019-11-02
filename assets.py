@@ -1,12 +1,12 @@
 import math
 import Vec3
-from Vec3 import Vec3
+from Vec3 import *
 
 
 class Ray:
     def __init__(self, o, d):
         self.o = o
-        self.d = d/d.norm()
+        self.d = normalize(d)
 
 
 class Light:
@@ -24,14 +24,14 @@ class Sphere:
         print("Sphere at {} with radius {} and color {}".format(self.pos, self.radius, self.color))
 
     def normal(self, v):
-        return (v - self.pos).normalize()
+        return normalize(v - self.pos)
 
     def intersect(self, ray):
         cam_sphere = self.pos - ray.o  # camera sphere distance
-        angle_ray_sphere = math.acos(ray.d.dot(cam_sphere)/cam_sphere.norm())
-        dist_ray_sphere = math.sin(angle_ray_sphere)*cam_sphere.norm() #cam_sphere.cross(ray.d).norm()  # ray sphere distance
+        angle_ray_sphere = math.acos(ray.d.dot(cam_sphere)/norm(cam_sphere))
+        dist_ray_sphere = math.sin(angle_ray_sphere)*norm(cam_sphere)
         if dist_ray_sphere <= self.radius:
-            dist_cam_sphere = cam_sphere.norm()
+            dist_cam_sphere = norm(cam_sphere)
             dist_ray_intersection = math.sqrt(dist_cam_sphere*dist_cam_sphere - dist_ray_sphere*dist_ray_sphere) \
                  - math.sqrt(self.radius*self.radius - dist_ray_sphere*dist_ray_sphere)
             i_point = ray.o + dist_ray_intersection*ray.d

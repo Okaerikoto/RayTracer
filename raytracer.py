@@ -21,9 +21,12 @@ def main():
             if intersect:
                 n = sphere.normal(i)
                 l = light.pos - i
-                light_source = max(n.dot(l.normalize()),0) * light.strength * sphere.color.mul(light.color)
-                light_ambient = sphere.color.mul(ambient)
-                c = light_source + light_ambient
+                diffuse = max(dot(n, normalize(l)),0) * light.strength * mul(sphere.color, light.color)
+                #Specular
+                # r = (2*n - l).normalize()
+                # specular = max(0.5*r.dot(i.normalize()),0) * light.strength * sphere.color.mul(light.color)
+                ambient = mul(ambient, sphere.color)
+                c = ambient + diffuse
             f.write("{} {} {}\n".format(floatto8bit(c.x), floatto8bit(c.y), floatto8bit(c.z)))
 
 
