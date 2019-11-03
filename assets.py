@@ -10,10 +10,16 @@ class Ray:
 
 
 class Light:
-    def __init__(self, pos=Vec3(0,0,0), color=Vec3(1,1,1), strength=1):
+    def __init__(self, pos=Vec3(0,0,0), color=Vec3(1,1,1), strength=1, radius=10):
         self.pos = pos
         self.color = color
-        self.strength = strength
+        self._strength = strength
+        self.radius = radius
+
+    def strength(self, point):
+        dist = norm(self.pos - point)
+        out = self._strength * min(self.radius*self.radius/(dist*dist), 1)
+        return out
 
 class Sphere:
 
@@ -28,7 +34,7 @@ class Sphere:
 
     def intersect(self, ray):
         cam_sphere = self.pos - ray.o  # camera sphere distance
-        angle_ray_sphere = math.acos(ray.d.dot(cam_sphere)/norm(cam_sphere))
+        angle_ray_sphere = math.acos(dot(ray.d, cam_sphere)/norm(cam_sphere))
         dist_ray_sphere = math.sin(angle_ray_sphere)*norm(cam_sphere)
         if dist_ray_sphere <= self.radius:
             dist_cam_sphere = norm(cam_sphere)
@@ -41,9 +47,9 @@ class Sphere:
 
 class Camera:
 
-    def __init__(self):
-        self.res_width = 100
-        self.res_height = 100
+    def __init__(self, res):
+        self.res_width = res[0]
+        self.res_height = res[1]
         self.width = 1
         self.height = 1
         self.focal = 1
@@ -55,7 +61,7 @@ class Camera:
 
     def shoot_ray(self, i, j):
         x,z = self.pixel_to_meters(i, j)
-        ray = Ray(Vec3(0,0,0), Vec3(z, self.focal, x))
+        ray = Ray(Vec3(0,0,0), Vec3(z, self.focal, -x))
         return ray
 
 # Convert 0-1 float to 0-255 int
