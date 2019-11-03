@@ -1,6 +1,17 @@
 # RayTracer
 
-Python project rendering a sphere with Phong Shading
+Python project rendering a sphere with Phong Shading.
+
+## Install and launch
+
+Developped with Python 3.7.4, no other dependancies
+
+Launch with :
+`python raytracer.py`
+
+This will render the image and write it in a .ppm file. The scene layout can be changed in raytracer.py.
+
+## Description
 
 This is a very basic ray tracer, it features:
 - One static camera at origine pointing towards +y
