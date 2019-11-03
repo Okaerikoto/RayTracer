@@ -12,3 +12,7 @@ For each pixel of the camera, a ray is shoot. If it intersects the sphere (ie if
 Once we have the intersection point, we can easily compute its normal and distance to the light and then compute its color with Phongs's shader.
 
 For each pixel, the color is written in a ppm file which enable straightforward visualisation.
+
+Result image:
+
+![rendered_picture.png](rendered_picture.png)
