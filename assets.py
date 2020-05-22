@@ -8,6 +8,11 @@ class Ray:
         self.o = o
         self.d = normalize(d)
 
+#Todo to be integrated
+class Asset:
+    def __init__(self, pos=Vec3(0, 0, 0), color=Vec3(1, 1, 1)):
+        self.pos = pos
+        self.color = color
 
 class Light:
     def __init__(self, pos=Vec3(0,0,0), color=Vec3(1,1,1), strength=1, radius=10):
@@ -44,6 +49,31 @@ class Sphere:
             return True, i_point
         return False, None
 
+class Triangle:
+#todo test this class
+    def __init__(self, points):
+        self.points = points
+        self.normal = normalize(cross(points[1]-points[0], points[2]-points[0]))
+        self.d = -dot(points[0], points[1])
+
+    def intersect(self, ray):
+        #https://www.cs.princeton.edu/courses/archive/fall00/cs426/lectures/raycast/sld017.htm
+        t = -(dot(ray.o, self.normal) + self.d) / dot(ray.d, self.normal)
+        i_point = ray.o + t*ray.d
+        #todo check if i is inside the triqngle
+        return None, i_point
+
+class Mesh():
+
+    def __init__(self, triangles):
+        self.triangles = triangles
+
+    def intersect(self, ray):
+        for t in self.triangles:
+            intersect, point = t.intersect(ray)
+            if intersect:
+                return intersect, point
+        return None
 
 class Camera:
 

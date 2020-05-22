@@ -49,6 +49,8 @@ def norm(v):
     return math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
 
 def normalize(u):
+    if norm(u) == 0 :
+        return 0
     return u/norm(u)
 
 def cross(u, v):

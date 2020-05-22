@@ -9,7 +9,7 @@ Developped with Python 3.7.4, no other dependancies
 Launch with :
 `python raytracer.py`
 
-This will render the image and write it in a .ppm file. The scene layout can be changed in raytracer.py.
+This will render the image and write it in a .ppm file. The scene layout can be changed in main.py.
 
 ## Description
 
@@ -27,3 +27,13 @@ For each pixel, the color is written in a ppm file which enable straightforward 
 Result image:
 
 ![rendered_picture.png](rendered_picture.png)
+
+## Todo
+
+- Render multiple assets (asset list)
+- Occlusion
+- Anti-aliasing
+- Render triangle 
+    - Detect intersection 
+        - https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-stage)
+        -  https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution       -

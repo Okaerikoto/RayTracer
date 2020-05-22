@@ -23,4 +23,8 @@ def run_tests():
     l = Light()
     # r2 = Ray(Vec3(0, 0, 0), Vec3(0, 1, 0.5))
     # print(s.intersect(r2) == (True, Vec3(0, 1, 0.5)))
+
+    t = Triangle([Vec3(0,0,1), Vec3(1,0,1), Vec3(0,1,1)])
+    print(t.normal == Vec3(0,0,1))
+    print(t.intersect(Ray(Vec3(2,3,0), Vec3(0,0,1)))[1])
     pass
